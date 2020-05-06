@@ -35,22 +35,17 @@ function nextGeneration () {
     for (let i=0; i<cols; i++) {
         for (let j=0; j<rows; j++) {
             let state = grid[i][j];
+            
+            //count live neighbours
+            let neighbours = countNeighbours(grid, i, j);            
 
-            //edges
-            if (i===0 || i===cols-1 || j===0 || j===rows-1){
-                next[i][j] = state;
+            if (state === '.' && neighbours === 3) {
+                next[i][j] = 'X';
+            } else
+            if (state === 'X' && (neighbours < 2 || neighbours > 3)) {
+                next[i][j] = '.';
             } else {
-                //count live neighbours
-                let neighbours = countNeighbours(grid, i, j);            
-
-                if (state === '.' && neighbours === 3) {
-                    next[i][j] = 'X';
-                } else
-                if (state === 'X' && (neighbours < 2 || neighbours > 3)) {
-                    next[i][j] = '.';
-                } else {
-                    next[i][j] = state;
-                }
+                next[i][j] = state;
             }
         }
     }
@@ -61,7 +56,10 @@ function countNeighbours (grid, x, y) {
     let sum = 0;
     for (let i=-1; i<2; i++) {
         for (let j=-1; j<2; j++) {
-            if (grid[x+i][y+j] === 'X') {
+            //wrap around - x and y consider the other sides as neighbours
+            let col = (x+i+cols) % cols;
+            let row = (y+j+rows) % rows;
+            if (grid[col][row] === 'X') {
                 sum += 1;
             }
         }
