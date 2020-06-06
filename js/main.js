@@ -5,9 +5,10 @@ const black = '#000';
 const white = '#fff';
 let color = '';
 let grid;
-let fieldSize = 20;
-let iterationCount = 100;
+const fieldSize = 30;
+const iterationCount = 500;
 let generationCount = 0;
+const iterationSpeed = 150; 
 
 function make2DArray (fieldSize) {
     let arr = new Array(fieldSize);
@@ -18,30 +19,32 @@ function make2DArray (fieldSize) {
 }
 
 function setup () {
-    let HTML = '';
-    grid = make2DArray(fieldSize);
-    for ( let y=0; y<fieldSize; y++ ) {        
-        HTML += `<div class="row"
-                      style="height: calc(100% / ${fieldSize});">`;
-            for ( let x=0; x<fieldSize; x++ ) {
-                if (Math.random() < 0.22) {
-                    color = black;
-                    grid[y][x] = 'X';
-                } else {
-                    color = white;
-                    grid[y][x] = '.';
-                }    
-                HTML += `<div class="cell"
-                              style="background-color: ${color};
-                                     width: calc(100% / ${fieldSize});">
-                        </div>`;
-            }
-        HTML += `</div>`;        
-    }
-    generationCount++;
-    DOM.innerHTML = HTML;
-    console.table(grid);
-          
+    setTimeout(() => {
+        let HTML = '';
+        grid = make2DArray(fieldSize);
+        for ( let y=0; y<fieldSize; y++ ) {        
+            HTML += `<div class="row"
+                          style="height: calc(100% / ${fieldSize});">`;
+                for ( let x=0; x<fieldSize; x++ ) {
+                    if (Math.random() < 0.2) {
+                        color = black;
+                        grid[y][x] = 'X';
+                    } else {
+                        color = white;
+                        grid[y][x] = '.';
+                    }    
+                    HTML += `<div class="cell"
+                                  style="background-color: ${color};
+                                         width: calc(100% / ${fieldSize});">
+                            </div>`;
+                }
+            HTML += `</div>`;        
+        }
+        generationCount++;
+        console.log(generationCount);
+        DOM.innerHTML = HTML;
+        //console.table(grid);        
+    }, iterationSpeed);          
 }
 
 setup();
@@ -92,7 +95,7 @@ function nextGeneration () {
         if (generationCount===iterationCount) {
             clearInterval(game);
         }
-    }, 500);
+    }, iterationSpeed);
 
 }
 
