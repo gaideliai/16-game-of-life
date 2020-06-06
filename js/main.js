@@ -1,64 +1,91 @@
 "use strict";
 
-function make2DArray (cols, rows) {
-    let arr = new Array(cols);
-    for (let i=0; i<arr.length; i++) {
-        arr[i] = new Array (rows);        
+const DOM = document.querySelector('#field');
+const black = '#000';
+const white = '#fff';
+let color = '';
+let grid;
+let fieldSize = 20;
+let iterationCount = 50;
+
+function make2DArray (fieldSize) {
+    let arr = new Array(fieldSize);
+    for (let i=0; i<fieldSize; i++) {
+        arr[i] = new Array(fieldSize);        
     }
-    return arr;
-    //console.log(arr);    
+    return arr;   
 }
 
-let grid;
-let cols = 20;
-let rows = 20;
-
-
 function setup () {
-    grid = make2DArray(cols, rows);
-
-    for (let i=0; i<cols; i++) {
-        for (let j=0; j<rows; j++) {            
-            //grid[i][j] = floor(random(2));
-            if (Math.random() < 0.22) {
-                grid[i][j] = 'X';
-            } else {
-                grid[i][j] = '.';
+    let HTML = '';
+    grid = make2DArray(fieldSize);
+    for ( let y=0; y<fieldSize; y++ ) {        
+        HTML += `<div class="row"
+                      style="height: calc(100% / ${fieldSize});">`;
+            for ( let x=0; x<fieldSize; x++ ) {
+                if (Math.random() < 0.22) {
+                    color = black;
+                    grid[y][x] = 'X';
+                } else {
+                    color = white;
+                    grid[y][x] = '.';
+                }    
+                HTML += `<div class="cell"
+                              style="background-color: ${color};
+                                     width: calc(100% / ${fieldSize});">
+                        </div>`;
             }
-        }        
+        HTML += `</div>`;        
     }
+    DOM.innerHTML = HTML;
     console.table(grid);  
 }
 
 function nextGeneration () {
-    let next = make2DArray(cols, rows);
-    for (let i=0; i<cols; i++) {
-        for (let j=0; j<rows; j++) {
-            let state = grid[i][j];
+    let HTML = '';
+    let next = make2DArray(fieldSize);
+    for (let y=0; y<fieldSize; y++) {
+        HTML += `<div class="row"
+                      style="height: calc(100% / ${fieldSize});">`;
+        for (let x=0; x<fieldSize; x++) {
+            let state = grid[y][x];
             
             //count live neighbours
-            let neighbours = countNeighbours(grid, i, j);            
+            let neighbours = countNeighbours(grid, x, y);            
 
             if (state === '.' && neighbours === 3) {
-                next[i][j] = 'X';
+                next[y][x] = 'X';
+                color = black;
             } else
             if (state === 'X' && (neighbours < 2 || neighbours > 3)) {
-                next[i][j] = '.';
+                next[y][x] = '.';
+                color = white;
             } else {
-                next[i][j] = state;
+                next[y][x] = state;
+                if (state === 'X') {
+                    color = black;
+                } else {
+                    color = white;
+                }
             }
+            HTML += `<div class="cell"
+                              style="background-color: ${color};
+                                     width: calc(100% / ${fieldSize});">
+                        </div>`;
         }
+        HTML += `</div>`;
     }
+    DOM.innerHTML = HTML;
     console.table(next);    
 }
 
 function countNeighbours (grid, x, y) {
     let sum = 0;
-    for (let i=-1; i<2; i++) {
-        for (let j=-1; j<2; j++) {
+    for (let i=-1; i<=1; i++) {
+        for (let j=-1; j<=1; j++) {
             //wrap around - x and y consider the other sides as neighbours
-            let col = (x+i+cols) % cols;
-            let row = (y+j+rows) % rows;
+            let col = (x+i+fieldSize) % fieldSize;
+            let row = (y+j+fieldSize) % fieldSize;
             if (grid[col][row] === 'X') {
                 sum += 1;
             }
