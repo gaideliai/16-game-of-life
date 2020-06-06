@@ -6,7 +6,8 @@ const white = '#fff';
 let color = '';
 let grid;
 let fieldSize = 20;
-let iterationCount = 50;
+let iterationCount = 100;
+let generationCount = 0;
 
 function make2DArray (fieldSize) {
     let arr = new Array(fieldSize);
@@ -37,46 +38,62 @@ function setup () {
             }
         HTML += `</div>`;        
     }
+    generationCount++;
     DOM.innerHTML = HTML;
-    console.table(grid);  
+    console.table(grid);
+          
 }
 
-function nextGeneration () {
-    let HTML = '';
-    let next = make2DArray(fieldSize);
-    for (let y=0; y<fieldSize; y++) {
-        HTML += `<div class="row"
-                      style="height: calc(100% / ${fieldSize});">`;
-        for (let x=0; x<fieldSize; x++) {
-            let state = grid[y][x];
-            
-            //count live neighbours
-            let neighbours = countNeighbours(grid, x, y);            
+setup();
+let game;
 
-            if (state === '.' && neighbours === 3) {
-                next[y][x] = 'X';
-                color = black;
-            } else
-            if (state === 'X' && (neighbours < 2 || neighbours > 3)) {
-                next[y][x] = '.';
-                color = white;
-            } else {
-                next[y][x] = state;
-                if (state === 'X') {
+function nextGeneration () {    
+    game = setInterval(() => {
+        let HTML = '';
+        let next = make2DArray(fieldSize);
+        for (let y=0; y<fieldSize; y++) {
+            HTML += `<div class="row"
+                          style="height: calc(100% / ${fieldSize});">`;
+            for (let x=0; x<fieldSize; x++) {
+                let state = grid[y][x];
+                
+                //count live neighbours
+                let neighbours = countNeighbours(grid, y, x);            
+    
+                if (state === '.' && neighbours === 3) {
+                    next[y][x] = 'X';
                     color = black;
-                } else {
+                } else
+                if (state === 'X' && (neighbours < 2 || neighbours > 3)) {
+                    next[y][x] = '.';
                     color = white;
+                } else {
+                    next[y][x] = state;
+                    if (state === 'X') {
+                        color = black;
+                    } else {
+                        color = white;
+                    }
                 }
+                HTML += `<div class="cell"
+                                  style="background-color: ${color};
+                                         width: calc(100% / ${fieldSize});">
+                            </div>`;
             }
-            HTML += `<div class="cell"
-                              style="background-color: ${color};
-                                     width: calc(100% / ${fieldSize});">
-                        </div>`;
+            HTML += `</div>`;
         }
-        HTML += `</div>`;
-    }
-    DOM.innerHTML = HTML;
-    console.table(next);    
+        generationCount++;
+        DOM.innerHTML = HTML;
+        grid = next;
+        // console.table(next);
+        console.log(generationCount);
+
+
+        if (generationCount===iterationCount) {
+            clearInterval(game);
+        }
+    }, 500);
+
 }
 
 function countNeighbours (grid, x, y) {
@@ -97,5 +114,4 @@ function countNeighbours (grid, x, y) {
     return sum;
 }
 
-setup();
-nextGeneration ();
+nextGeneration();
