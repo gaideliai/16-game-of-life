@@ -19,7 +19,7 @@ function make2DArray (fieldSize) {
 }
 
 function setup () {
-    setTimeout(() => {
+    // setTimeout(() => {
         let HTML = '';
         grid = make2DArray(fieldSize);
         for ( let y=0; y<fieldSize; y++ ) {        
@@ -44,7 +44,7 @@ function setup () {
         console.log(generationCount);
         DOM.innerHTML = HTML;
         //console.table(grid);        
-    }, iterationSpeed);          
+    // }, iterationSpeed);          
 }
 
 setup();
